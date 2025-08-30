@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "772675941698",
+    "project_id": "raion-hackjam-95aaf",
+    "storage_bucket": "raion-hackjam-95aaf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:772675941698:android:91aeef3f41c646d82004db",
+        "android_client_info": {
+          "package_name": "com.example.hackjamraion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaqCIYZqhPldwyon_JreOk6u_0mGzWIRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
