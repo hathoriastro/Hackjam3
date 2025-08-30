@@ -16,7 +16,7 @@ class _LoginPageDemoState extends State<LoginPageDemo> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  String errorMessage = '';
+  String errorMessage = 'anjay';
 
   @override
   void register() async {
