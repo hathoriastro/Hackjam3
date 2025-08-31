@@ -1,4 +1,5 @@
-import 'package:hackjamraion/auth/register_page.dart';
+import 'package:hackjamraion/pages/auth/login_page.dart';
+import 'package:hackjamraion/pages/auth/register_page.dart';
 import 'package:hackjamraion/components/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -52,7 +53,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const RegisterPageDemo(),
+                      builder: (context) => const RegisterPage(),
                     ),
                   );
                 },
@@ -74,9 +75,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterPageDemo(),
-                    ),
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
                   );
                 },
                 child: Text("Login", style: TextStyle(color: primaryBlue)),

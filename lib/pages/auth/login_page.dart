@@ -1,37 +1,39 @@
 import 'package:hackjamraion/components/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:hackjamraion/pages/user/home_page.dart';
 
-import '../services/auth_services.dart';
+import '../../services/auth_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class RegisterPageDemo extends StatefulWidget {
-  const RegisterPageDemo({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<RegisterPageDemo> createState() => _RegisterPageDemoState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _RegisterPageDemoState extends State<RegisterPageDemo> {
-  final TextEditingController _usernameController = TextEditingController();
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  String errorMessage = '';
+  String errorMessage = '   ';
 
-  @override
-  void register() async {
+  void signIn() async {
     try {
-      await authService.value.createAccount(
+      await authService.value.signIn(
         email: _emailController.text,
         password: _passwordController.text,
-        username: _usernameController.text,
+      );
+      // navigasi ke HomePage
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message ?? 'Error';
       });
     }
-    ;
   }
 
   @override
@@ -40,22 +42,6 @@ class _RegisterPageDemoState extends State<RegisterPageDemo> {
     final height = size.height;
     final width = size.width;
     bool _loading = false;
-
-    @override
-    void register() async {
-      try {
-        await authService.value.createAccount(
-          email: _emailController.text,
-          password: _passwordController.text,
-          username: _usernameController.text,
-        );
-      } on FirebaseAuthException catch (e) {
-        setState(() {
-          errorMessage = e.message ?? 'Error';
-        });
-      }
-      ;
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -84,7 +70,7 @@ class _RegisterPageDemoState extends State<RegisterPageDemo> {
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
-                      SizedBox(height: constraints.maxHeight * 0.2),
+                      SizedBox(height: constraints.maxHeight * 0.3),
                       Expanded(
                         child: Container(
                           decoration: const BoxDecoration(
@@ -99,18 +85,13 @@ class _RegisterPageDemoState extends State<RegisterPageDemo> {
                             children: [
                               SizedBox(height: constraints.maxHeight * 0.06),
                               const Text(
-                                "Create your account",
+                                "Login",
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                               SizedBox(height: constraints.maxHeight * 0.05),
-                              customInputField(
-                                context: context,
-                                labelText: "Username",
-                                controller: _usernameController,
-                              ),
                               customInputField(
                                 context: context,
                                 labelText: "Email",
@@ -140,13 +121,13 @@ class _RegisterPageDemoState extends State<RegisterPageDemo> {
                                     backgroundColor: primaryBlue,
                                   ),
                                   onPressed: () {
-                                    register();
+                                    signIn();
                                   },
                                   child: _loading
                                       ? const CircularProgressIndicator(
                                           color: Colors.white,
                                         )
-                                      : const Text("Register"),
+                                      : const Text("Login"),
                                 ),
                               ),
                             ],

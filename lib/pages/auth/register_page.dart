@@ -1,61 +1,57 @@
 import 'package:hackjamraion/components/colors.dart';
 import 'package:flutter/material.dart';
-
-import '../services/auth_services.dart';
+import 'package:hackjamraion/pages/user/home_page.dart';
+import '../../services/auth_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginPageDemo extends StatefulWidget {
-  const LoginPageDemo({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPageDemo> createState() => _LoginPageDemoState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageDemoState extends State<LoginPageDemo> {
+class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  String errorMessage = 'anjay';
+  String errorMessage = '';
+  bool _loading = false;
 
-  @override
-  void register() async {
+  Future<void> register() async {
+    setState(() {
+      _loading = true;
+      errorMessage = '';
+    });
+
     try {
       await authService.value.createAccount(
-        email: _emailController.text,
-        password: _passwordController.text,
-        username: _usernameController.text,
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        username: _usernameController.text.trim(),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomePage()),
       );
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message ?? 'Error';
       });
+    } finally {
+      setState(() {
+        _loading = false;
+      });
     }
-    ;
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size; // Size of the whole screen
+    final size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
-    bool _loading = false;
-
-    @override
-    void register() async {
-      try {
-        await authService.value.createAccount(
-          email: _emailController.text,
-          password: _passwordController.text,
-          username: _usernameController.text,
-        );
-      } on FirebaseAuthException catch (e) {
-        setState(() {
-          errorMessage = e.message ?? 'Error';
-        });
-      }
-      ;
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -68,9 +64,9 @@ class _LoginPageDemoState extends State<LoginPageDemo> {
           child: Row(
             children: [
               SizedBox(width: width * 0.02),
-              Icon(Icons.arrow_back_ios_new),
+              const Icon(Icons.arrow_back_ios_new),
               SizedBox(width: width * 0.02),
-              Text("Back"),
+              const Text("Back"),
             ],
           ),
         ),
@@ -106,6 +102,8 @@ class _LoginPageDemoState extends State<LoginPageDemo> {
                                 ),
                               ),
                               SizedBox(height: constraints.maxHeight * 0.05),
+
+                              // 🔹 Input fields
                               customInputField(
                                 context: context,
                                 labelText: "Username",
@@ -122,13 +120,19 @@ class _LoginPageDemoState extends State<LoginPageDemo> {
                                 controller: _passwordController,
                                 obscureText: true,
                               ),
+
                               Align(
                                 alignment: Alignment.center,
                                 child: Text(
                                   errorMessage,
-                                  style: TextStyle(color: Colors.redAccent),
+                                  style: const TextStyle(
+                                    color: Colors.redAccent,
+                                  ),
                                 ),
                               ),
+                              SizedBox(height: height * 0.02),
+
+                              // 🔹 Register button
                               SizedBox(
                                 width: width * 0.8,
                                 height: height * 0.06,
@@ -139,9 +143,7 @@ class _LoginPageDemoState extends State<LoginPageDemo> {
                                     ),
                                     backgroundColor: primaryBlue,
                                   ),
-                                  onPressed: () {
-                                    register();
-                                  },
+                                  onPressed: register,
                                   child: _loading
                                       ? const CircularProgressIndicator(
                                           color: Colors.white,
@@ -187,14 +189,14 @@ Widget customInputField({
           controller: controller,
           decoration: InputDecoration(
             labelText: labelText,
-            labelStyle: TextStyle(color: Colors.black54, fontSize: 12),
+            labelStyle: const TextStyle(color: Colors.black54, fontSize: 12),
             floatingLabelBehavior: FloatingLabelBehavior.never,
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
+              borderSide: const BorderSide(color: Colors.transparent),
               borderRadius: BorderRadius.circular(10),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
+              borderSide: const BorderSide(color: Colors.transparent),
               borderRadius: BorderRadius.circular(10),
             ),
             fillColor: Colors.white,
