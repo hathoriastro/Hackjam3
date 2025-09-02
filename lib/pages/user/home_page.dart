@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hackjamraion/pages/auth/welcome_page.dart';
 import 'package:hackjamraion/services/auth_services.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,6 +12,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String? username;
+
+  @override
+  void initState() {
+    super.initState();
+    getUsername();
+  }
+
+  Future<void> getUsername() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .get();
+      if (doc.exists) {
+        setState(() {
+          username = doc["username"];
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -23,8 +48,12 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await authService.value.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const WelcomePage()),
+              );
             },
-          )
+          ),
         ],
       ),
       body: Padding(
@@ -34,8 +63,13 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: height * 0.2),
             Center(
               child: Text(
-                'This is home page',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
+                username != null
+                    ? "Hello, $username 👋"
+                    : "Loading username...",
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],

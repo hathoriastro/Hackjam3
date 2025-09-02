@@ -24,10 +24,8 @@ class MyApp extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasData) {
-            // 🔹 User sudah login → langsung ke HomePage
             return const HomePage();
           }
-          // 🔹 User belum login → ke LoginPage
           return const WelcomePage();
         },
       ),

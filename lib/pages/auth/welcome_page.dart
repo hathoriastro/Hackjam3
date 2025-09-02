@@ -18,71 +18,90 @@ class _WelcomePageState extends State<WelcomePage> {
     final width = size.width;
 
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SizedBox(height: height * 0.2),
-            Center(
-              child: Text(
-                'Welcome',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
-              ),
+      body: Stack(
+        children: [
+          // Background image
+          SizedBox.expand(
+            child: Image.asset(
+              "assets/images/background.png",
+              fit: BoxFit.cover,
             ),
-            SizedBox(height: height * 0.02),
-            Center(
-              child: Text(
-                'Lorem Ipsum Dolor Sit Amet \nVel Nobis gw',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            SizedBox(height: height * 0.1),
-            CircleAvatar(radius: 80),
-            SizedBox(height: height * 0.1),
-            SizedBox(
-              width: width * 0.8,
-              height: height * 0.06,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32),
-                  ),
-                  backgroundColor: primaryBlue,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterPage(),
+          ),
+
+          // Foreground content
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                SizedBox(height: height * 0.2),
+                Center(
+                  child: Text(
+                    'Welcome',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black, // to be visible on background
                     ),
-                  );
-                },
-                child: Text("Register"),
-              ),
-            ),
-            SizedBox(height: height * 0.01),
-            SizedBox(
-              width: width * 0.8,
-              height: height * 0.06,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32),
-                    side: BorderSide(width: 1),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                },
-                child: Text("Login", style: TextStyle(color: primaryBlue)),
-              ),
+                SizedBox(height: height * 0.02),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    'Atur keuanganmu dengan cara yang simpel, seru, dan sesuai gayamu!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                SizedBox(height: height * 0.4),
+                SizedBox(
+                  width: width * 0.8,
+                  height: height * 0.06,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                      backgroundColor: primaryBlue,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegisterPage(),
+                        ),
+                      );
+                    },
+                    child: Text("Create an account"),
+                  ),
+                ),
+                SizedBox(height: height * 0.01),
+                SizedBox(
+                  width: width * 0.8,
+                  height: height * 0.06,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32),
+                        side: BorderSide(width: 0.5),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      );
+                    },
+                    child: Text("Login", style: TextStyle(color: primaryBlue)),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
