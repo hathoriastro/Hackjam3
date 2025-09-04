@@ -32,5 +32,6 @@ const Color secondaryYellow100 = Color(0xFF332804);
 const Color lightGray = Color(0xFFD9D9D9);
 const Color white = Color(0xFFFAFAFA);
 const Color grey = Color(0xFFF0F0F0);
+const Color darkGrey = Color(0xFF616161);
 
 // Black

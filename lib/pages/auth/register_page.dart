@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:hackjamraion/components/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:hackjamraion/pages/auth/login_page.dart';

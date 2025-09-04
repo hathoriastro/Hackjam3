@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hackjamraion/components/user/navbar.dart';
 import 'package:hackjamraion/pages/auth/welcome_page.dart';
 import 'package:hackjamraion/services/auth_services.dart';
+import 'package:hackjamraion/services/export_services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -39,7 +41,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final height = size.height;
-
+    sendToWebhook('Nasi Goreng : 20000');
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
@@ -75,6 +77,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavbar(selectedItem: 0),
     );
   }
 }

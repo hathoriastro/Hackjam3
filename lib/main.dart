@@ -3,10 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hackjamraion/pages/auth/welcome_page.dart';
 import 'package:hackjamraion/pages/user/home_page.dart';
+import 'package:hackjamraion/pages/user/scan_page_demo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(); // pastikan sudah setup firebase_options.dart
+
   runApp(const MyApp());
 }
 
@@ -16,12 +18,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Auth Demo',
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.blue),
+      // Pakai stream builder untuk cek auth state
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
           }
           if (snapshot.hasData) {
             return const HomePage();

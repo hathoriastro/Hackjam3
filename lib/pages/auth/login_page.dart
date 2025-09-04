@@ -18,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   String errorMessage = '   ';
+  bool _loading = false;
 
   void signIn() async {
     try {
@@ -34,6 +35,29 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         errorMessage = e.message ?? 'Error';
       });
+    }
+  }
+
+  Future<void> signingoogle() async {
+    setState(() {
+      _loading = true;
+      errorMessage = '';
+    });
+
+    try {
+      UserCredential? userCredential = await authService.value
+          .signInWithGoogle();
+      if (userCredential != null) {
+        print('Logged in with Google: ${userCredential.user?.displayName}');
+      } else {
+        print('Google sign-in was canceled or failed.');
+      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
+    } on FirebaseAuthException catch (e) {
+      print('Google sign-in error: ${e.message}');
     }
   }
 
@@ -155,10 +179,8 @@ class _LoginPageState extends State<LoginPage> {
                                         alignment: Alignment.centerRight,
                                         child: Text(
                                           'Lupa Password?',
-                                          style: TextStyle(
-                                            fontSize: 12
-                                          ),
-                                          ),
+                                          style: TextStyle(fontSize: 12),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -217,11 +239,14 @@ class _LoginPageState extends State<LoginPage> {
                                     ],
                                   ),
                                   SizedBox(height: height * 0.02),
-                                  CircleAvatar(
-                                    backgroundColor: grey,
-                                    child: Image.asset(
-                                      'assets/images/google_icon.png',
-                                      scale: 1.75,
+                                  GestureDetector(
+                                    onTap: signingoogle,
+                                    child: CircleAvatar(
+                                      backgroundColor: grey,
+                                      child: Image.asset(
+                                        'assets/images/google_icon.png',
+                                        scale: 1.75,
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: height * 0.02),
