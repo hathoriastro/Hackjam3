@@ -4,7 +4,9 @@ import 'package:hackjamraion/components/colors.dart';
 import 'package:hackjamraion/pages/user/anggaran_page.dart';
 import 'package:hackjamraion/pages/user/home_page.dart';
 import 'package:hackjamraion/pages/user/home_page_demo.dart';
+import 'package:hackjamraion/pages/user/profile_page.dart';
 import 'package:hackjamraion/pages/user/scan_page_demo.dart';
+import 'package:hackjamraion/pages/user/transaksi_page.dart';
 
 class BottomNavbar extends StatefulWidget {
   final int selectedItem;
@@ -39,12 +41,12 @@ class _BottomNavState extends State<BottomNavbar> {
     } else if (index == 3) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+        MaterialPageRoute(builder: (_) => const TransaksiPage()),
       );
     } else if (index == 4) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+        MaterialPageRoute(builder: (_) => const ProfilePage()),
       );
     }
   }

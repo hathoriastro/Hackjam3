@@ -22,23 +22,23 @@ class _HomePageDemoState extends State<HomePageDemo> {
   @override
   void initState() {
     super.initState();
-    // getUsername();
+    getUsername();
   }
 
-  // Future<void> getUsername() async {
-  //   final uid = FirebaseAuth.instance.currentUser?.uid;
-  //   if (uid != null) {
-  //     final doc = await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(uid)
-  //         .get();
-  //     if (doc.exists) {
-  //       setState(() {
-  //         username = doc["username"];
-  //       });
-  //     }
-  //   }
-  // }
+  Future<void> getUsername() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .get();
+      if (doc.exists) {
+        setState(() {
+          username = doc["username"];
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
