@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hackjamraion/components/colors.dart';
 import 'package:hackjamraion/pages/user/anggaran_page.dart';
 import 'package:hackjamraion/pages/user/home_page.dart';
-import 'package:hackjamraion/pages/user/scan_page.dart';
+import 'package:hackjamraion/pages/user/home_page_demo.dart';
 import 'package:hackjamraion/pages/user/scan_page_demo.dart';
 
 class BottomNavbar extends StatefulWidget {
@@ -24,7 +24,7 @@ class _BottomNavState extends State<BottomNavbar> {
     if (index == 0) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+        MaterialPageRoute(builder: (_) => const HomePageDemo()),
       );
     } else if (index == 1) {
       Navigator.pushReplacement(
@@ -147,20 +147,20 @@ class _BottomNavState extends State<BottomNavbar> {
             icon: Column(
               children: [
                 SvgPicture.asset(
-                  'assets/images/navbar/edukasi_icon.svg',
-                  width: 20,
-                  height: 20,
+                  'assets/images/navbar/transaksi_icon.svg',
+                  width: 25,
+                  height: 25,
                 ),
                 SizedBox(height: 5),
               ],
             ),
-            label: 'Edukasi',
+            label: 'Transaksi',
             activeIcon: Column(
               children: [
                 SvgPicture.asset(
-                  'assets/images/navbar/edukasi_icon.svg',
-                  width: 20,
-                  height: 20,
+                  'assets/images/navbar/transaksi_icon.svg',
+                  width: 25,
+                  height: 25,
                   colorFilter: const ColorFilter.mode(
                     primaryBlue,
                     BlendMode.srcIn,

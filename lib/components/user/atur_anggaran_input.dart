@@ -9,11 +9,11 @@ class AturAnggaranInput extends StatefulWidget {
   final TextEditingController controller;
 
   const AturAnggaranInput({
-    super.key, 
-    required this.title, 
+    super.key,
+    required this.title,
     required this.path,
     required this.controller,
-    });
+  });
 
   @override
   State<AturAnggaranInput> createState() => _AturAnggaranInputState();
@@ -25,7 +25,6 @@ class _AturAnggaranInputState extends State<AturAnggaranInput> {
     final size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
-    final TextEditingController _inputController = TextEditingController();
 
     return Padding(
       padding: EdgeInsets.only(top: 10),
@@ -64,6 +63,8 @@ class _AturAnggaranInputState extends State<AturAnggaranInput> {
                     width: width * 0.25,
                     height: 30,
                     child: TextField(
+                      controller:
+                          widget.controller, // ✅ pakai yang dikirim dari luar
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       style: TextStyle(fontSize: 12),
@@ -77,7 +78,6 @@ class _AturAnggaranInputState extends State<AturAnggaranInput> {
                           borderSide: BorderSide(width: 1),
                         ),
                       ),
-                      controller: widget.controller,
                     ),
                   ),
                 ],

@@ -5,6 +5,7 @@ import 'package:hackjamraion/components/anggaran_icon.dart';
 import 'package:hackjamraion/components/colors.dart';
 import 'package:hackjamraion/components/user/anggaran_card.dart';
 import 'package:hackjamraion/components/user/atur_anggaran_input.dart';
+import 'package:hackjamraion/components/user/budget_card.dart';
 import 'package:hackjamraion/components/user/navbar.dart';
 
 class AnggaranPage extends StatefulWidget {
@@ -17,30 +18,36 @@ class AnggaranPage extends StatefulWidget {
 class _AnggaranPageState extends State<AnggaranPage>
     with SingleTickerProviderStateMixin {
   String? username;
+
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
   bool _isPanelVisible = false;
 
-  // Simpan budget tiap kategori dalam Map
+  // simpan budget default
   Map<String, int> budgets = {
-    "Transportasi": 100000,
-    "Pendidikan": 5000000,
-    "Hiburan": 100000,
-    "Kesehatan": 100000,
-    "Belanja": 100000,
+    "Transportasi": 0,
+    "Pendidikan": 0,
+    "Hiburan": 0,
+    "Kesehatan": 0,
+    "Belanja": 0,
     "Makanan": 0,
     "Donasi": 0,
     "Biaya Darurat": 0,
     "Tagihan": 0,
   };
 
-  // Controller input
+  // data dari Firestore
+  Map<String, dynamic> data = {};
+
+  // controller untuk text input tiap kategori
   final Map<String, TextEditingController> controllers = {};
 
   @override
   void initState() {
     super.initState();
+
     getUsername();
+    getBudgets();
 
     _controller = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -52,27 +59,13 @@ class _AnggaranPageState extends State<AnggaranPage>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
-    // Inisialisasi controller tiap kategori
+    // inisialisasi controller default
     budgets.forEach((key, value) {
       controllers[key] = TextEditingController(text: value.toString());
     });
   }
 
-  void _showPanel() {
-    setState(() {
-      _isPanelVisible = true;
-      _controller.forward();
-    });
-  }
-
-  void _hidePanel() {
-    _controller.reverse().then((value) {
-      setState(() {
-        _isPanelVisible = false;
-      });
-    });
-  }
-
+  // ambil username dari Firestore
   Future<void> getUsername() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
@@ -88,14 +81,95 @@ class _AnggaranPageState extends State<AnggaranPage>
     }
   }
 
-  void _saveBudgets() {
+  // ambil budgets dari Firestore
+  Future<void> getBudgets() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    final doc = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .get();
+
+    if (doc.exists) {
+      setState(() {
+        data = doc.data()?["budgets"] ?? {};
+
+        // update controllers sesuai data Firestore
+        data.forEach((key, value) {
+          controllers[key] = TextEditingController(
+            text: value["numUpper"]?.toString() ?? "0",
+          );
+        });
+      });
+    }
+  }
+
+  // ambil total transaksi per kategori
+  Future<Map<String, int>> _getTotalsByCategory() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('transactions')
+        .get();
+
+    Map<String, int> totals = {};
+    for (var doc in snapshot.docs) {
+      final data = doc.data();
+      final kategori = (data['kategori'] ?? 'lainnya').toString().toLowerCase();
+      final harga = (data['harga'] ?? 0) as num;
+
+      totals[kategori] = (totals[kategori] ?? 0) + harga.toInt();
+    }
+
+    return totals;
+  }
+
+  void _saveBudgets() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
     setState(() {
       budgets.forEach((key, _) {
         final text = controllers[key]?.text ?? "0";
         budgets[key] = int.tryParse(text) ?? 0;
       });
     });
+
+    final newData = budgets.map(
+      (key, value) => MapEntry(key, {
+        "numUpper": value,
+        "numBelow": data[key]?["numBelow"] ?? 0,
+      }),
+    );
+
+    await FirebaseFirestore.instance.collection("users").doc(uid).set({
+      "budgets": newData,
+    }, SetOptions(merge: true));
+
+    if (!mounted) return;
+    setState(() {
+      data = newData;
+    });
+
     _hidePanel();
+  }
+
+  // panel control
+  void _showPanel() {
+    setState(() {
+      _isPanelVisible = true;
+      _controller.forward();
+    });
+  }
+
+  void _hidePanel() {
+    // sebelum panel ditutup, simpan dulu
+    _saveBudgets();
+
+    _controller.reverse().then((value) {
+      setState(() {
+        _isPanelVisible = false;
+      });
+    });
   }
 
   @override
@@ -105,20 +179,21 @@ class _AnggaranPageState extends State<AnggaranPage>
     super.dispose();
   }
 
+  // build UI
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final height = size.height;
 
     return Scaffold(
-      backgroundColor: Color(0xFFF2F2F2),
+      backgroundColor: const Color(0xFFF2F2F2),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         toolbarHeight: height * 0.09,
         backgroundColor: primaryBlue50,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
         ),
-        leading: Icon(Icons.arrow_back_ios, color: Colors.white),
         centerTitle: true,
         title: const Text(
           "Anggaran",
@@ -131,98 +206,110 @@ class _AnggaranPageState extends State<AnggaranPage>
       ),
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          FutureBuilder<Map<String, int>>(
+            future: _getTotalsByCategory(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final totals = snapshot.data!;
+
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
                     children: [
-                      Text(
-                        'Kategori',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
+                      Center(child: SaldoCard()),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Kategori',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
+                          ),
+                          FilledButton(
+                            onPressed: _showPanel,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: primaryBlue,
+                            ),
+                            child: const Text('Atur Budget'),
+                          ),
+                        ],
                       ),
-                      FilledButton(
-                        onPressed: _showPanel,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: primaryBlue,
-                        ),
-                        child: Text('Atur Budget'),
+                      // setiap kategori
+                      AnggaranCard(
+                        title: 'Transportasi',
+                        path: AppIcons.transportasi,
+                        indicatorColor: const Color(0xFF3A7879),
+                        numBelow: totals["transportasi"] ?? 0,
+                        numUpper: data["Transportasi"]?["numUpper"] ?? 0,
+                      ),
+                      AnggaranCard(
+                        title: 'Pendidikan',
+                        path: AppIcons.pendidikan,
+                        indicatorColor: const Color(0xFF783A79),
+                        numBelow: totals["pendidikan"] ?? 0,
+                        numUpper: data["Pendidikan"]?["numUpper"] ?? 0,
+                      ),
+                      AnggaranCard(
+                        title: 'Hiburan',
+                        path: AppIcons.hiburan,
+                        indicatorColor: const Color(0xFF793A3B),
+                        numBelow: totals["hiburan"] ?? 0,
+                        numUpper: data["Hiburan"]?["numUpper"] ?? 0,
+                      ),
+                      AnggaranCard(
+                        title: 'Kesehatan',
+                        path: AppIcons.kesehatan,
+                        indicatorColor: const Color(0xFF9D6329),
+                        numBelow: totals["kesehatan"] ?? 0,
+                        numUpper: data["Kesehatan"]?["numUpper"] ?? 0,
+                      ),
+                      AnggaranCard(
+                        title: 'Belanja',
+                        path: AppIcons.belanja,
+                        indicatorColor: const Color(0xFF549D29),
+                        numBelow: totals["belanja"] ?? 0,
+                        numUpper: data["Belanja"]?["numUpper"] ?? 0,
+                      ),
+                      AnggaranCard(
+                        title: 'Makanan',
+                        path: AppIcons.makanan,
+                        indicatorColor: const Color(0xFF29749D),
+                        numBelow: totals["makanan"] ?? 0,
+                        numUpper: data["Makanan"]?["numUpper"] ?? 0,
+                      ),
+                      AnggaranCard(
+                        title: 'Donasi',
+                        path: AppIcons.donasi,
+                        indicatorColor: const Color(0xFF61299D),
+                        numBelow: totals["donasi"] ?? 0,
+                        numUpper: data["Donasi"]?["numUpper"] ?? 0,
+                      ),
+                      AnggaranCard(
+                        title: 'Biaya Darurat',
+                        path: AppIcons.biayaDarurat,
+                        indicatorColor: const Color(0xFF9D2929),
+                        numBelow: totals["biaya darurat"] ?? 0,
+                        numUpper: data["Biaya Darurat"]?["numUpper"] ?? 0,
+                      ),
+                      AnggaranCard(
+                        title: 'Tagihan',
+                        path: AppIcons.tagihan,
+                        indicatorColor: const Color(0xFFBCAA04),
+                        numBelow: totals["tagihan"] ?? 0,
+                        numUpper: data["Tagihan"]?["numUpper"] ?? 0,
                       ),
                     ],
                   ),
-                  AnggaranCard(
-                    title: 'Transportasi',
-                    path: AppIcons.transportasi,
-                    indicatorColor: Color(0xFF3A7879),
-                    numBelow: 40000,
-                    numUpper: budgets["Transportasi"]!,
-                  ),
-                  AnggaranCard(
-                    title: 'Pendidikan',
-                    path: AppIcons.pendidikan,
-                    indicatorColor: Color(0xFF783A79),
-                    numBelow: 1000000,
-                    numUpper: budgets["Pendidikan"]!,
-                  ),
-                  AnggaranCard(
-                    title: 'Hiburan',
-                    path: AppIcons.hiburan,
-                    indicatorColor: Color(0xFF793A3B),
-                    numBelow: 40000,
-                    numUpper: budgets["Hiburan"]!,
-                  ),
-                  AnggaranCard(
-                    title: 'Kesehatan',
-                    path: AppIcons.kesehatan,
-                    indicatorColor: Color(0xFF9D6329),
-                    numBelow: 40000,
-                    numUpper: budgets["Kesehatan"]!,
-                  ),
-                  AnggaranCard(
-                    title: 'Belanja',
-                    path: AppIcons.belanja,
-                    indicatorColor: Color(0xFF549D29),
-                    numBelow: 40000,
-                    numUpper: budgets["Belanja"]!,
-                  ),
-                  AnggaranCard(
-                    title: 'Makanan',
-                    path: AppIcons.makanan,
-                    indicatorColor: Color(0xFF29749D),
-                    numBelow: 40000,
-                    numUpper: budgets["Makanan"]!,
-                  ),
-                  AnggaranCard(
-                    title: 'Donasi',
-                    path: AppIcons.donasi,
-                    indicatorColor: Color(0xFF61299D),
-                    numBelow: 40000,
-                    numUpper: budgets["Donasi"]!,
-                  ),
-                  AnggaranCard(
-                    title: 'Biaya Darurat',
-                    path: AppIcons.biayaDarurat,
-                    indicatorColor: Color(0xFF9D2929),
-                    numBelow: 40000,
-                    numUpper: budgets["Biaya Darurat"]!,
-                  ),
-                  AnggaranCard(
-                    title: 'Tagihan',
-                    path: AppIcons.belanja,
-                    indicatorColor: Color(0xFFBCAA04),
-                    numBelow: 40000,
-                    numUpper: budgets["Tagihan"]!,
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
-
           if (_isPanelVisible)
             GestureDetector(
               onTap: () {},
@@ -239,7 +326,7 @@ class _AnggaranPageState extends State<AnggaranPage>
             ),
         ],
       ),
-      bottomNavigationBar: BottomNavbar(selectedItem: 1),
+      bottomNavigationBar: const BottomNavbar(selectedItem: 1),
     );
   }
 
@@ -266,11 +353,11 @@ class _AnggaranPageState extends State<AnggaranPage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  onPressed: _saveBudgets,
+                  onPressed: _hidePanel,
                   icon: const Icon(Icons.close),
                   color: Colors.grey[700],
                 ),
-                SizedBox(width: 30),
+                const SizedBox(width: 30),
               ],
             ),
           ),

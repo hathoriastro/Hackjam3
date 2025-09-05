@@ -41,7 +41,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final height = size.height;
-    sendToWebhook('Nasi Goreng : 20000');
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),

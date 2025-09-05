@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hackjamraion/pages/auth/welcome_page.dart';
-import 'package:hackjamraion/pages/user/home_page.dart';
-import 'package:hackjamraion/pages/user/scan_page_demo.dart';
+import 'package:hackjamraion/pages/user/home_page_demo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +20,6 @@ class MyApp extends StatelessWidget {
       title: 'Auth Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      // Pakai stream builder untuk cek auth state
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
@@ -31,7 +29,7 @@ class MyApp extends StatelessWidget {
             );
           }
           if (snapshot.hasData) {
-            return const HomePage();
+            return const HomePageDemo();
           }
           return const WelcomePage();
         },

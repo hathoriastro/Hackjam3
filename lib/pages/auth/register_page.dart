@@ -2,6 +2,7 @@ import 'package:hackjamraion/components/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:hackjamraion/pages/auth/login_page.dart';
 import 'package:hackjamraion/pages/user/home_page.dart';
+import 'package:hackjamraion/pages/user/home_page_demo.dart';
 import '../../services/auth_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -35,7 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+        MaterialPageRoute(builder: (_) => const HomePageDemo()),
       );
     } on FirebaseAuthException catch (e) {
       setState(() {
@@ -64,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
       }
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+        MaterialPageRoute(builder: (_) => const HomePageDemo()),
       );
     } on FirebaseAuthException catch (e) {
       print('Google sign-in error: ${e.message}');

@@ -27,7 +27,7 @@ class _ScanPageDemoState extends State<ScanPageDemo> {
 
   // Ganti dengan URL webhook n8n milikmu
   final String _n8nWebhookUrl =
-      'https://hathoriastro.app.n8n.cloud/webhook-test/e761aae7-415b-4cd0-bb9e-60b1d0ddf03a';
+      'https://hathoriastro.app.n8n.cloud/webhook/e761aae7-415b-4cd0-bb9e-60b1d0ddf03a';
 
   Future<void> _scanImageAndProcess() async {
     setState(() {
@@ -132,139 +132,168 @@ class _ScanPageDemoState extends State<ScanPageDemo> {
         ),
         centerTitle: true,
       ),
-      body: Container(
-        padding: EdgeInsets.all(20),
-        width: width,
-        child: Column(
-          children: [
-            SvgPicture.asset(
-              'assets/images/scanpage/receipt_graphic.svg',
-              width: 250,
-              height: 250,
-            ),
-            SizedBox(height: height * 0.05),
-            Container(
-              height: height * 0.35,
-              width: width * 0.9,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [BoxShadow(color: Colors.black)],
-              ),
-              child: Padding(
-                padding: EdgeInsetsGeometry.only(left: 15, top: 20, right: 15),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Bikin Baru',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Pilih cara yang kamu mau',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: height * 0.02),
-                    GestureDetector(
-                      onTap: _isLoading ? null : _scanImageAndProcess,
-                      child: Container(
-                        height: height * 0.1,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF2F2F2),
-                          border: Border.all(width: 0.5),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/images/scanpage/camera_icon.svg',
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Hitung Otomatis Pakai Struk',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                Text(
-                                  'Foto strukmu dan AI akan scan \notomatis',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Icon(Icons.arrow_forward_ios),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: height * 0.02),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        height: height * 0.1,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF2F2F2),
-                          border: Border.all(width: 0.5),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/images/scanpage/rincian_icon.svg',
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Masukkan rinciannya sendiri',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                Text(
-                                  'Tambah detail transaksi sesuai \nkebutuhanmu',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Icon(Icons.arrow_forward_ios),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+      body: Stack(
+        children: [
+          // === Konten utama ===
+          Container(
+            padding: EdgeInsets.all(20),
+            width: width,
+            child: Column(
+              children: [
+                SvgPicture.asset(
+                  'assets/images/scanpage/receipt_graphic.svg',
+                  width: 250,
+                  height: 250,
                 ),
+                SizedBox(height: height * 0.05),
+                Container(
+                  height: height * 0.35,
+                  width: width * 0.9,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(color: Colors.black12, blurRadius: 6),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 15,
+                      top: 20,
+                      right: 15,
+                    ),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Bikin Baru',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Pilih cara yang kamu mau',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: height * 0.02),
+                        GestureDetector(
+                          onTap: _isLoading ? null : _scanImageAndProcess,
+                          child: Container(
+                            height: height * 0.1,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFF2F2F2),
+                              border: Border.all(width: 0.5),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/images/scanpage/camera_icon.svg',
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Hitung Otomatis Pakai Struk',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Foto strukmu dan AI akan scan \notomatis',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Icon(Icons.arrow_forward_ios),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: height * 0.02),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const PreviewPage(
+                                  items: [],
+                                ), // kirim list kosong
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: height * 0.1,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFF2F2F2),
+                              border: Border.all(width: 0.5),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/images/scanpage/rincian_icon.svg',
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Masukkan rinciannya sendiri',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Tambah detail transaksi sesuai \nkebutuhanmu',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Icon(Icons.arrow_forward_ios),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // === Overlay Loading ===
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.3),
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
